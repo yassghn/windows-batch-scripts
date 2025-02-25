@@ -1,6 +1,7 @@
 @echo off
 
 REM convert mp3 to video
+REM usage: convert-mp3-to-video.bat mp3_directory image_file
 
 ECHO convert mp3 to video
 
