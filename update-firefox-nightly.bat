@@ -8,41 +8,35 @@ ECHO:
 ECHO update firefox nightly
 ECHO:
 
-SET distZipPath=%~dpnx1
-SET updateDir=%~dpn2
+SET distPath=C:\Users\borys\dev\mozilla\mozilla-source\mozilla-unified\obj-x86_64-pc-windows-msvc\dist
+SET packageNameFile=package_name.txt
+SET updateDir=C:\Users\borys\AppData\Local\Programs\mozilla
+SET distZip=
 
-REM check if distZipPath/updateDir was passed
-REM if not passed, prompt user for paths
+REM get package name from file
 
-IF NOT DEFINED distZipPath (
-    ECHO provide dist zip file path
-    SET /P distZipPath="distZipPath: "
-)
-IF NOT DEFINED updateDir (
-    ECHO provide update dir
-    set /P updateDir="updateDir: "
+FOR /F "delims=" %%i in (%distPath%\%packageNameFile%) do (
+    SET distZip=%%~nxi
 )
 
 ECHO:
-ECHO using distZipPath: %distZipPath%
+ECHO using distPath: %distPath%
 ECHO using updateDir: %updateDir%
 
 REM check if zipfile exists
 
-SET zipFile=
+SET zipFile=%distPath%\%distZip%
 
-IF EXIST %distZipPath% (
-    REM get zip file from path
-    FOR /F %%i in ("%distZipPath%") DO SET zipFile=%%~nxi
+IF EXIST %zipFile% (
+    REM zip file exists
+    ECHO using zipFile: %zipFile%
+    ECHO:
 ) ELSE (
     REM error exit
     ECHO:
     ECHO ERROR: bad path for dist zip file
     GOTO :end
 )
-
-ECHO using zipFile: %zipFile%
-ECHO:
 
 REM check if update dir exists
 
@@ -58,10 +52,10 @@ IF EXIST %updateDir%\NUL (
 
 REM check for existing zip
 
-IF EXIST %updateDir%\%zipFile% (
+IF EXIST %updateDir%\%distZip% (
     REM checkfor existing backup
 
-    SET backupFile=%updateDir%\backup-%zipFile%
+    SET backupFile=%updateDir%\backup-%distZip%
 
     IF EXIST !backupFile! (
         REM delete existing backup
@@ -74,7 +68,7 @@ IF EXIST %updateDir%\%zipFile% (
     REM backup existing zip
 
     ECHO backing up existing zip to: !backupFile!
-    MOVE %updateDir%\%zipFile% !backupFile!
+    MOVE %updateDir%\%distZip% !backupFile!
 )
 
 REM copy new zip
@@ -82,7 +76,7 @@ REM copy new zip
 ECHO copying dist zip file
 ECHO:
 
-COPY %distZipPath% %updateDir%
+COPY %zipFile% %updateDir%
 
 REM check for existing firefox folder
 
@@ -100,7 +94,7 @@ REM unzip new zip
 ECHO extracting firefox nightly
 ECHO:
 
-call TAR -xf %updateDir%\%zipFile% -C %updateDir%
+call TAR -xf %updateDir%\%distZip% -C %updateDir%
 
 ECHO done.
 
