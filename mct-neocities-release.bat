@@ -5,6 +5,9 @@ rem
 rem mdn-canvas-tutorial neocities release
 rem   - convert mjs files to js
 rem   - rename mjs imports to js
+rem
+rem usage: mct-neocities-release.bat .\mdn-canvas-tutorial\dist\js\
+rem        (needs "\" at the end)
 
 echo:
 echo -------------------------------------
